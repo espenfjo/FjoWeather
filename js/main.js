@@ -36,7 +36,7 @@ function createUrl(startDate) {
     var end_year = endDate.getFullYear();
     var end_month = endDate.getMonth() + 1;
     var end_date = endDate.getDate();
-    var url = "http://graphite.mrfjo.org/render/";
+    var url = "http://graphite.<yourdomain>.org/render/";
     date_from = "00:00_" + start_year + start_month + "01";
     date_to = "23:59_" + end_year + end_month + end_date;
     url += "?from=" + date_from + "&until=" + date_to;
