@@ -1,5 +1,4 @@
-var name, single, metric, scale, prefix;
-
+var name, single, metric, prefix;
 $(function() {
     $("#dp1").datepicker({
         autoclose: true,
@@ -25,7 +24,9 @@ function createUrl(startDate) {
     name = queryObj()["name"];
     scale = queryObj()["scale"];
     prefix = queryObj()["prefix"];
-    window.console && console.info(single);
+    if(typeof scale === 'undefined')
+        scale = 1;
+
     metric = location.hash.replace(/^#/, "");
     metric = metric.split("&").shift();
     if (typeof startDate === "undefined") startDate = new Date();
@@ -36,26 +37,29 @@ function createUrl(startDate) {
     var end_year = endDate.getFullYear();
     var end_month = endDate.getMonth() + 1;
     var end_date = endDate.getDate();
-    var url = "http://graphite.<yourdomain>.org/render/";
+    var url = "http://graphite.mrfjo.org/render/";
     date_from = "00:00_" + start_year + start_month + "01";
     date_to = "23:59_" + end_year + end_month + end_date;
     url += "?from=" + date_from + "&until=" + date_to;
     url += "&target=";
     var gd = metric;
+
     if (typeof single !== "undefined") {
+        if (typeof scale !== "undefined") {
+            gd = "scale(" + gd + ',"' + scale + '")';
+        }
         if (typeof name !== "undefined") {
             gd = "alias(" + gd + ',"' + name + '")';
         }
     }
-    if (typeof scale !== "undefined") {
-        gd = "scale(" + gd + ',"' + scale + '")';
-    }
+
     if (typeof single === "undefined") {
         var lgd = gd;
         if (typeof name !== "undefined") {
-            gd = "alias(smartSummarize(" + lgd + ',"1day","max"),"' + name + ' Average")';
-            gd += "&target=alias(smartSummarize(" + lgd + ',"1day","min"),"' + name + ' Min")';
-            gd += "&target=alias(smartSummarize(" + lgd + ',"1day","avg"),"' + name + ' Average")';
+            gd  = sprintf("alias(scale(smartSummarize( %s, '1day', 'max'), %s), '%s Average')", lgd, scale, name);
+            gd += sprintf("&target=alias(scale(smartSummarize( %s, '1day','min'), %s), '%s Min')", lgd, scale, name);
+            gd += sprintf("&target=alias(scale(smartSummarize( %s, '1day','avg'), %s), '%s Average')", lgd, scale, name);
+            console.info(gd);
         } else {
             gd = "smartSummarize(" + lgd + ',"1day","max")';
             gd += "&target=smartSummarize(" + lgd + ",'1day','min')";
@@ -185,4 +189,11 @@ function queryObj() {
         result[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
     }
     return result;
+}
+function sprintf( format )
+{
+    for( var i=1; i < arguments.length; i++ ) {
+        format = format.replace( /%s/, arguments[i] );
+    }
+    return format;
 }
