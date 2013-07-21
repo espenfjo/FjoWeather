@@ -16,10 +16,20 @@ $(function() {
     var today = month + "-" + now.getFullYear();
     $(".datepicker").datepicker("setDate", now);
     $("#dp1 input").val(today);
-    setupChart(createUrl(new Date()));
 });
 
+function setupDashboard() {
+    for (var i = 0; i < dashboard.elements.length; i++) {
+        var element = dashboard.elements[i];
+        var name = element.name;
+        var metric = element.metric;
+        var type   = element.type;
+        this[type](name,metric,i);
+    }
+}
+
 function createUrl(startDate) {
+    $("#graphs").append('<div id="graph"></div>');    
     single = queryObj()["single"];
     name = queryObj()["name"];
     scale = queryObj()["scale"];
@@ -37,7 +47,7 @@ function createUrl(startDate) {
     var end_year = endDate.getFullYear();
     var end_month = endDate.getMonth() + 1;
     var end_date = endDate.getDate();
-    var url = "http://graphite.mrfjo.org/render/";
+    var url = graphite;
     date_from = "00:00_" + start_year + start_month + "01";
     date_to = "23:59_" + end_year + end_month + end_date;
     url += "?from=" + date_from + "&until=" + date_to;
@@ -197,3 +207,4 @@ function sprintf( format )
     }
     return format;
 }
+
