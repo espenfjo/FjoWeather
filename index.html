@@ -18,20 +18,19 @@
     <script src="js/boot/js/bootstrap-datepicker.js"></script>
     <script>
       $(function () {
-          var metric = location.hash.replace(/^#/, '');
+         var id = queryObj()["id"];
 
           window.onhashchange = function(){
-              metric = location.hash.replace(/^#/, '');
+              var id = queryObj()["id"];
               jQuery('#graphs').empty(); // Remove all graphs
-
-              if( metric !== '' ){
-                  setupChart(createUrl(new Date(), metric));
+              if( typeof id !== 'undefined' ){
+                  setupChart(createUrl(new Date(), id), id);
               }else {
                   setupDashboard();
               }
           }
-          if( metric !== '' ){
-              setupChart(createUrl(new Date(), metric));
+          if( typeof id !== 'undefined' ){
+              setupChart(createUrl(new Date(), id), id);
           }else {
               setupDashboard();
           }
@@ -49,21 +48,7 @@
             <li><a href="#contact">Contact</a></li>-->
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Graphs<b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li class="nav-header">Temperature</li>
-                <li><a href="#mrfjo.hjemme.temp.telldus.Balkong&name=Balcony Temperature">Balcony</a></li>
-                <li><a href="#mrfjo.hjemme.temp.telldus.Soverom&name=Bedroom Temperature">Bedroom</a></li>
-                <li><a href="#mrfjo.hjemme.temp.28-0000044ddd1d&scale=0.001&name=Outside wall Temperature">Outside Wall</a></li>
-                <li><a href="#mrfjo.hjemme.temp.28-000002dcb9bc&scale=0.001&name=Office desk Temperature">Office Desk</a></li>
-                <li class="divider"></li>
-                <li class="nav-header">Pressure</li>
-                <li><a href="#mrfjo.hjemme.pressure.bmp085_pressure&single=true&name=Pressure">BMP085</a></li>
-                <li class="divider"></li>
-                <li class="nav-header">Humidity</li>
-                <li><a href="#mrfjo.hjemme.humidity.dht11_humidity&single=true&name=Humidity">DHT11</a></li>
-                <li class="divider"></li>
-                <li class="nav-header">Light</li>
-                <li><a href="#mrfjo.hjemme.light.tsl2561_lux&single=true&name=Lux">TSL2561</a></li>
+              <ul id="dropdown-menu" class="dropdown-menu">
               </ul>
             </li>
           </ul>
@@ -90,21 +75,22 @@
     </div>
 
     </div>
-    
-    
-    <script src="js/plugins.js"></script>
-    <script src="http://code.highcharts.com/stock/highstock.js"></script>
-    <script src="http://code.highcharts.com/stock/highcharts-more.js"></script>
-    
 
-      <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. 
-      <script>
-        (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
-        function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
-        e=o.createElement(i);r=o.getElementsByTagName(i)[0];
-        e.src='//www.google-analytics.com/analytics.js';
-        r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
-        ga('create','UA-XXXXX-X');ga('send','pageview');
-      </script>-->
+
+    <script src="js/plugins.js"></script>
+    <script src="http://code.highcharts.com/stock/highstock.src.js"></script>
+    <script src="http://code.highcharts.com/stock/highcharts-more.js"></script>
+
+
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+          ga('create', 'UA-42473435-2', 'mrfjo.org');
+          ga('send', 'pageview');
+
+        </script>
   </body>
 </html>

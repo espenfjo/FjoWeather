@@ -1,4 +1,5 @@
 var name, single, metric, prefix;
+
 $(function() {
     $("#dp1").datepicker({
         autoclose: true,
@@ -8,7 +9,8 @@ $(function() {
         startDate = new Date(ev.date);
         var month = startDate.getMonth() + 1;
         if (month < 10) month = "0" + month;
-        setupChart(createUrl(startDate));
+        var id = queryObj()["id"];
+        setupChart(createUrl(startDate, id), id);
     });
     var now = new Date();
     var month = now.getMonth() + 1;
@@ -16,29 +18,49 @@ $(function() {
     var today = month + "-" + now.getFullYear();
     $(".datepicker").datepicker("setDate", now);
     $("#dp1 input").val(today);
+    $("#dropdown-menu").empty();
+    populateDropdown();
 });
 
+function getMetricById(id) {
+    return metrics[id];
+}
+
+function populateDropdown() {
+    for (var i = 0; i < metrics.length; i++) {
+        var metric = metrics[i];
+        var name = metric.name;
+        var metricPath = metric.metricPath;
+        var type = metric.type;
+        if ($("#" + type).length == 0) {
+            $("#dropdown-menu").append("<li id='" + type + "' class='nav-header'>" + type + "</li>");
+            $("#dropdown-menu").append("<li class='divider'></li>");
+        }
+        $("#" + type).append("<li><a href='#?id=" + i + "'>" + name + "</a></li>");
+    }
+    $(".divider").last().remove();
+}
+
 function setupDashboard() {
-    for (var i = 0; i < dashboard.elements.length; i++) {
-        var element = dashboard.elements[i];
-        var name = element.name;
-        var metric = element.metric;
-        var type   = element.type;
-        this[type](name,metric,i);
+    for (var i = 0; i < metrics.length; i++) {
+        var metric = metrics[i];
+        var name = metric.name;
+        var metricPath = metric.metricPath;
+        var type = metric.type;
+        if (metric.dashboard === true) {
+            this[type](name, metricPath, i);
+        }
     }
 }
 
-function createUrl(startDate) {
-    $("#graphs").append('<div id="graph"></div>');    
-    single = queryObj()["single"];
-    name = queryObj()["name"];
-    scale = queryObj()["scale"];
-    prefix = queryObj()["prefix"];
-    if(typeof scale === 'undefined')
-        scale = 1;
-
-    metric = location.hash.replace(/^#/, "");
-    metric = metric.split("&").shift();
+function createUrl(startDate, id) {
+    $("#graphs").append('<div id="graph"></div>');
+    var metric = getMetricById(id);
+    var metricPath = metric.metricPath;
+    var scale = metric.scale;
+    var single = metric.single;
+    var name = metric.name;
+    if (typeof scale === "undefined" || scale == "") scale = 1;
     if (typeof startDate === "undefined") startDate = new Date();
     var endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
     endDate = new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0);
@@ -52,9 +74,9 @@ function createUrl(startDate) {
     date_to = "23:59_" + end_year + end_month + end_date;
     url += "?from=" + date_from + "&until=" + date_to;
     url += "&target=";
-    var gd = metric;
-
-    if (typeof single !== "undefined") {
+    var gd = metricPath;
+    if (typeof single !== "undefined" && single != false) {
+        console.info(single);
         if (typeof scale !== "undefined") {
             gd = "scale(" + gd + ',"' + scale + '")';
         }
@@ -62,14 +84,12 @@ function createUrl(startDate) {
             gd = "alias(" + gd + ',"' + name + '")';
         }
     }
-
-    if (typeof single === "undefined") {
+    if (typeof single === "undefined" || single == "" || single == false) {
         var lgd = gd;
-        if (typeof name !== "undefined") {
-            gd  = sprintf("alias(scale(smartSummarize( %s, '1day', 'max'), %s), '%s Average')", lgd, scale, name);
+        if (typeof name !== "undefined" && name != "") {
+            gd = sprintf("alias(scale(smartSummarize( %s, '1day', 'max'), %s), '%s Average')", lgd, scale, name);
             gd += sprintf("&target=alias(scale(smartSummarize( %s, '1day','min'), %s), '%s Min')", lgd, scale, name);
             gd += sprintf("&target=alias(scale(smartSummarize( %s, '1day','avg'), %s), '%s Average')", lgd, scale, name);
-            console.info(gd);
         } else {
             gd = "smartSummarize(" + lgd + ',"1day","max")';
             gd += "&target=smartSummarize(" + lgd + ",'1day','min')";
@@ -78,11 +98,10 @@ function createUrl(startDate) {
     }
     url += gd;
     url += "&format=json&rawData=true";
-    window.console && console.info(url);
     return url;
 }
 
-function setupChart(url) {
+function setupChart(url, id) {
     var nodata = false;
     var title;
     var options = {
@@ -110,11 +129,16 @@ function setupChart(url) {
             labelFormatter: function() {
                 var name = this.chart.options.series[0].name;
                 var curUrl = location.href;
-                if (typeof single === "undefined") {
-                    link = '<a href="' + curUrl + "&single=true" + '" style="color:#0898d9;text-decoration:underline;">[View detailed graph]</a>';
+                var metric = getMetricById(id);
+                var single = metric.single;
+                if (typeof single === "undefined" || single == "" || single == false) {
+                    metric.single = true;
+                    curUrl.replace("&", "");
+                    link = '<a href="#?id=' + id + '&" style="color:#0898d9;text-decoration:underline;">[View detailed graph]</a>';
                 } else {
-                    curUrl = curUrl.replace("&single=true", "");
-                    link = '<a href="' + curUrl + '" style="color:#0898d9;text-decoration:underline;">[View average]</a>';
+                    metric.single = false;
+                    curUrl.replace("&", "");
+                    link = '<a href="' + curUrl + '&" style="color:#0898d9;text-decoration:underline;">[View average]</a>';
                 }
                 return name + " " + link;
             }
@@ -194,17 +218,16 @@ function flip(series) {
 }
 
 function queryObj() {
-    var result = {}, queryString = location.href, re = /([^&=]+)=([^&]*)/g, m;
+    var result = {}, queryString = location.href, re = /([^?=]+)=([^&]*)/g, m;
     while (m = re.exec(queryString)) {
         result[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
     }
     return result;
 }
-function sprintf( format )
-{
-    for( var i=1; i < arguments.length; i++ ) {
-        format = format.replace( /%s/, arguments[i] );
+
+function sprintf(format) {
+    for (var i = 1; i < arguments.length; i++) {
+        format = format.replace(/%s/, arguments[i]);
     }
     return format;
 }
-

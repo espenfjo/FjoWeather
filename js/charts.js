@@ -1,4 +1,4 @@
-function temperature(name, metric, id) {
+function temperature(name, metricPath, id) {
     $("#graphs").append('<div id="' + name + '" class="col-4">foo</div>');
     var chart;
     var options = {
@@ -11,7 +11,7 @@ function temperature(name, metric, id) {
             plotBorderWidth: 0,
             plotShadow: false,
             events: {
-                load: liveData(metric, $(this), id)
+                load: liveData(metricPath, $(this), id)
             }
         },
         plotOptions: {
@@ -36,7 +36,7 @@ function temperature(name, metric, id) {
     $.ajax({
         async: false,
         dataType: "json",
-        url: graphite + "?target=" + metric + "&from=-20minutes&format=json",
+        url: graphite + "?target=" + metricPath + "&from=-20minutes&format=json",
         success: function(point) {
             point = point[0].datapoints;
             var data = getLatestPoint(point);
@@ -47,7 +47,7 @@ function temperature(name, metric, id) {
     chart = new Highcharts.Chart(options);
 }
 
-function pressure(name, metric, id) {
+function pressure(name, metricPath, id) {
     $("#graphs").append('<div id="barometer" class="col-4"></div>');
     var chart;
     var options = {
@@ -59,7 +59,7 @@ function pressure(name, metric, id) {
             plotBorderWidth: 0,
             plotShadow: false,
             events: {
-                load: liveData(metric, $(this), id)
+                load: liveData(metricPath, $(this), id)
             }
         },
         title: {
@@ -157,7 +157,7 @@ function pressure(name, metric, id) {
     $.ajax({
         async: false,
         dataType: "json",
-        url: graphite + "?target=" + metric + "&from=-20minutes&format=json",
+        url: graphite + "?target=" + metricPath + "&from=-20minutes&format=json",
         success: function(point) {
             point = point[0].datapoints;
             var data = getLatestPoint(point);
