@@ -134,7 +134,7 @@ function setupChart(url, id) {
                 if (typeof single === "undefined" || single == "" || single == false) {
                     metric.single = true;
                     curUrl.replace("&", "");
-                    link = '<a href="#?id=' + id + '&" style="color:#0898d9;text-decoration:underline;">[View detailed graph]</a>';
+                    link = '<a href="' + curUrl + '&" style="color:#0898d9;text-decoration:underline;">[View detailed graph]</a>';
                 } else {
                     metric.single = false;
                     curUrl.replace("&", "");
