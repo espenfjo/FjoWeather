@@ -4,7 +4,6 @@ var loaded = 0;
 
 $(function() {
     if (loaded === 0) {
-        console.info("Defaults!");
         metrics = [ {
             name: "Balkong",
             metricPath: "mrfjo.hjemme.temp.telldus.Balkong",
