@@ -36,7 +36,7 @@ function populateDropdown() {
             $("#dropdown-menu").append("<li id='" + type + "' class='nav-header'>" + type + "</li>");
             $("#dropdown-menu").append("<li class='divider'></li>");
         }
-        $("#" + type).append("<li><a href='#?id=" + i + "'>" + name + "</a></li>");
+        $("#" + type).after("<li><a href='#?id=" + i + "'>" + name + "</a></li>");
     }
     $(".divider").last().remove();
 }
