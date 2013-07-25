@@ -104,6 +104,8 @@ function createUrl(startDate, id) {
 function setupChart(url, id) {
     var nodata = false;
     var title;
+    var metric = getMetricById(id);
+    var suffix = metric.suffix;
     var options = {
         chart: {
             renderTo: "#graph",
@@ -129,7 +131,6 @@ function setupChart(url, id) {
             labelFormatter: function() {
                 var name = this.chart.options.series[0].name;
                 var curUrl = location.href;
-                var metric = getMetricById(id);
                 var single = metric.single;
                 if (typeof single === "undefined" || single == "" || single == false) {
                     metric.single = true;
@@ -149,7 +150,7 @@ function setupChart(url, id) {
         tooltip: {
             crosshairs: true,
             shared: true,
-            valueSuffix: "°C"
+            valueSuffix: " " + suffix
         },
         yAxis: {
             labels: {

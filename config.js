@@ -8,7 +8,7 @@ $(function() {
             name: "Balkong",
             metricPath: "mrfjo.hjemme.temp.telldus.Balkong",
             type: "temperature",
-            suffix: "",
+            suffix: "°C",
             scale: "",
             dashboard: true,
             single: false
@@ -16,7 +16,7 @@ $(function() {
             name: "Soverom",
             metricPath: "mrfjo.hjemme.temp.telldus.Soverom",
             type: "temperature",
-            suffix: "",
+            suffix: "°C",
             dashboard: true,
             scale: "",
             single: ""
@@ -25,7 +25,7 @@ $(function() {
             metricPath: "mrfjo.hjemme.temp.28-000002dcb9bc",
             type: "temperature",
             dashboard: false,
-            suffix: "",
+            suffix: "°C",
             scale: "0.001",
             single: ""
         }, {
@@ -33,7 +33,7 @@ $(function() {
             metricPath: "mrfjo.hjemme.temp.28-0000044ddd1d",
             type: "temperature",
             dashboard: false,
-            suffix: "",
+            suffix: "°C",
             scale: "0.001",
             single: ""
         }, {
@@ -42,14 +42,14 @@ $(function() {
             type: "pressure",
             dashboard: true,
             suffix: "",
-            scale: "",
+            scale: "Pa",
             single: true
         }, {
             name: "Light",
             metricPath: "mrfjo.hjemme.light.tsl2561_lux",
             type: "light",
             dashboard: false,
-            suffix: "",
+            suffix: "lx",
             scale: "",
             single: true
         }, {
@@ -57,7 +57,7 @@ $(function() {
             metricPath: "mrfjo.hjemme.humidity.dht11_humidity",
             type: "humidity",
             dashboard: false,
-            suffix: "",
+            suffix: "%",
             scale: "",
             single: true
         } ];
