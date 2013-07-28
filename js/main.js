@@ -23,20 +23,17 @@ $(function() {
     setListener();
 });
 
-
-
-function setListener(){
-    $('.dropdown-metric').on('click',function(){
+function setListener() {
+    $(".dropdown-metric").on("click", function() {
         var id = $(this).attr("id");
         setupChart(createUrl(new Date(), id), id);
     });
-    $('.home').on('click',function(){
+    $(".home").on("click", function() {
         var id = $(this).attr("id");
         setupDashboard();
     });
-
-    
 }
+
 function getMetricById(id) {
     return metrics[id];
 }
@@ -115,8 +112,8 @@ function createUrl(startDate, id) {
 }
 
 function setupChart(url, id) {
-    $('#graphs').empty(); // Remove all graphs
-    $("#graphs").append('<div id="graph"></div>'); // Add new container
+    $("#graphs").empty();
+    $("#graphs").append('<div id="graph"></div>');
     var nodata = false;
     var title;
     var metric = getMetricById(id);
@@ -150,10 +147,10 @@ function setupChart(url, id) {
                 var single = metric.single;
                 if (typeof single === "undefined" || single == "" || single == false) {
                     metric.single = true;
-                    link = '<span class="dropdown-metric" onclick="javascript:setupChart(createUrl(new Date(), id), id)" id="'+ id +'" style="color:#0898d9;text-decoration:underline;">[View detailed graph]</span>';
+                    link = '<span class="dropdown-metric" onclick="javascript:setupChart(createUrl(new Date(), id), id)" id="' + id + '" style="color:#0898d9;text-decoration:underline;">[View detailed graph]</span>';
                 } else {
                     metric.single = false;
-                    link = '<span onclick="javascript:setupChart(createUrl(new Date(), id), id)" class="dropdown-metric" id="'+ id +'" style="color:#0898d9;text-decoration:underline;">[View average]</span>';
+                    link = '<span onclick="javascript:setupChart(createUrl(new Date(), id), id)" class="dropdown-metric" id="' + id + '" style="color:#0898d9;text-decoration:underline;">[View average]</span>';
                 }
                 return name + " " + link;
             }

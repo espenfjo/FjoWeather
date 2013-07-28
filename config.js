@@ -37,8 +37,8 @@ var metrics = metrics || [ {
     metricPath: "mrfjo.hjemme.pressure.bmp085_pressure",
     type: "pressure",
     dashboard: true,
-    suffix: "",
-    scale: "Pa",
+    suffix: "Pa",
+    scale: "",
     single: true
 }, {
     name: "Light",
