@@ -12,28 +12,14 @@
     <link rel="stylesheet" href="js/boot/css/bootstrap.css">
     <link rel="stylesheet" href="js/boot/css/bootstrap-glyphicons.css">
     <link rel="stylesheet" href="css/datepicker.css">
+    <link rel="stylesheet" href="css/main.css">
     <script src="config.js"></script>
     <script src="js/main.js"></script>
     <script src="js/charts.js"></script>
     <script src="js/boot/js/bootstrap-datepicker.js"></script>
     <script>
       $(function () {
-         var id = queryObj()["id"];
-
-          window.onhashchange = function(){
-              var id = queryObj()["id"];
-              jQuery('#graphs').empty(); // Remove all graphs
-              if( typeof id !== 'undefined' ){
-                  setupChart(createUrl(new Date(), id), id);
-              }else {
-                  setupDashboard();
-              }
-          }
-          if( typeof id !== 'undefined' ){
-              setupChart(createUrl(new Date(), id), id);
-          }else {
-              setupDashboard();
-          }
+          setupDashboard();
       });
     </script>
   </head>
@@ -43,7 +29,7 @@
         <a class="navbar-brand" href="#">FjoWeather</a>
         <div class="nav-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
+            <li class="active"><a href="" class="menu" id="home">Home</a></li>
 <!--            <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>-->
             <li class="dropdown">

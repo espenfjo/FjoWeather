@@ -20,8 +20,23 @@ $(function() {
     $("#dp1 input").val(today);
     $("#dropdown-menu").empty();
     populateDropdown();
+    setListener();
 });
 
+
+
+function setListener(){
+    $('.dropdown-metric').on('click',function(){
+        var id = $(this).attr("id");
+        setupChart(createUrl(new Date(), id), id);
+    });
+    $('.home').on('click',function(){
+        var id = $(this).attr("id");
+        setupDashboard();
+    });
+
+    
+}
 function getMetricById(id) {
     return metrics[id];
 }
@@ -36,7 +51,7 @@ function populateDropdown() {
             $("#dropdown-menu").append("<li id='" + type + "' class='nav-header'>" + type + "</li>");
             $("#dropdown-menu").append("<li class='divider'></li>");
         }
-        $("#" + type).after("<li><a href='#?id=" + i + "'>" + name + "</a></li>");
+        $("#" + type).after("<li> <span id='" + i + "'class='dropdown-metric'>" + name + "</span></li>");
     }
     $(".divider").last().remove();
 }
@@ -54,7 +69,6 @@ function setupDashboard() {
 }
 
 function createUrl(startDate, id) {
-    $("#graphs").append('<div id="graph"></div>');
     var metric = getMetricById(id);
     var metricPath = metric.metricPath;
     var scale = metric.scale;
@@ -76,7 +90,6 @@ function createUrl(startDate, id) {
     url += "&target=";
     var gd = metricPath;
     if (typeof single !== "undefined" && single != false) {
-        console.info(single);
         if (typeof scale !== "undefined") {
             gd = "scale(" + gd + ',"' + scale + '")';
         }
@@ -102,6 +115,8 @@ function createUrl(startDate, id) {
 }
 
 function setupChart(url, id) {
+    $('#graphs').empty(); // Remove all graphs
+    $("#graphs").append('<div id="graph"></div>'); // Add new container
     var nodata = false;
     var title;
     var metric = getMetricById(id);
@@ -125,6 +140,7 @@ function setupChart(url, id) {
             layout: "vertical",
             verticalAlign: "top",
             shadow: true,
+            useHTML: true,
             floating: true,
             x: -1,
             y: -1,
@@ -134,12 +150,10 @@ function setupChart(url, id) {
                 var single = metric.single;
                 if (typeof single === "undefined" || single == "" || single == false) {
                     metric.single = true;
-                    curUrl.replace("&", "");
-                    link = '<a href="' + curUrl + '&" style="color:#0898d9;text-decoration:underline;">[View detailed graph]</a>';
+                    link = '<span class="dropdown-metric" onclick="javascript:setupChart(createUrl(new Date(), id), id)" id="'+ id +'" style="color:#0898d9;text-decoration:underline;">[View detailed graph]</span>';
                 } else {
                     metric.single = false;
-                    curUrl.replace("&", "");
-                    link = '<a href="' + curUrl + '&" style="color:#0898d9;text-decoration:underline;">[View average]</a>';
+                    link = '<span onclick="javascript:setupChart(createUrl(new Date(), id), id)" class="dropdown-metric" id="'+ id +'" style="color:#0898d9;text-decoration:underline;">[View average]</span>';
                 }
                 return name + " " + link;
             }
