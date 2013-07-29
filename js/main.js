@@ -61,7 +61,7 @@ function populateDropdown() {
         var metricPath = metric.metricPath;
         var type = metric.type;
         if ($("#" + type).length == 0) {
-            $("#dropdown-menu").append("<li id='" + type + "' class='nav-header'>" + type + "</li>");
+            $("#dropdown-menu").append("<li id='" + type + "' class='dropdown-header'>" + type + "</li>");
             $("#dropdown-menu").append("<li class='divider'></li>");
         }
         $("#" + type).after("<li> <span id='" + i + "'class='dropdown-metric'>" + name + "</span></li>");
