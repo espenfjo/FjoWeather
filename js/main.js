@@ -53,7 +53,18 @@ function populateDropdown() {
     $(".divider").last().remove();
 }
 
+function clearCharts() {
+    if (typeof Highcharts !== "undefined") {
+        for (var i = 0; i < Highcharts.charts.length; i++) {
+            Highcharts.charts[i].destroy();
+            console.info("Killing chart " + i);
+        }
+        Highcharts.charts = [];
+    }
+}
+
 function setupDashboard() {
+    clearCharts();
     for (var i = 0; i < metrics.length; i++) {
         var metric = metrics[i];
         var name = metric.name;
@@ -112,6 +123,7 @@ function createUrl(startDate, id) {
 }
 
 function setupChart(url, id) {
+    clearCharts();
     $("#graphs").empty();
     $("#graphs").append('<div id="graph"></div>');
     var nodata = false;
