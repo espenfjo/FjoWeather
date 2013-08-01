@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var name, single, metric, prefix;
+var name, single,  prefix, id, startDate;
 
 $(function() {
+    startDate = new Date();
     $("#dp1").datepicker({
         autoclose: true,
         minViewMode: "months",
@@ -25,8 +26,7 @@ $(function() {
         startDate = new Date(ev.date);
         var month = startDate.getMonth() + 1;
         if (month < 10) month = "0" + month;
-        var id = queryObj()["id"];
-        setupChart(createUrl(startDate, id), id);
+        setupChart(createUrl(id), id);
     });
     var now = new Date();
     var month = now.getMonth() + 1;
@@ -41,17 +41,14 @@ $(function() {
 
 function setListener() {
     $(".dropdown-metric").on("click", function() {
-        var id = $(this).attr("id");
-        setupChart(createUrl(new Date(), id), id);
+        id = $(this).attr("id");
+        setupChart(createUrl(id), id);
     });
+
     $(".home").on("click", function() {
-        var id = $(this).attr("id");
+        id = $(this).attr("id");
         setupDashboard();
     });
-}
-
-function getMetricById(id) {
-    return metrics[id];
 }
 
 function populateDropdown() {
@@ -72,7 +69,6 @@ function populateDropdown() {
 function clearCharts() {
     if (typeof Highcharts !== "undefined") {
         for (var i = 0; i < Highcharts.charts.length; i++) {
-            console.info(Highcharts);
             Highcharts.charts[i].destroy();
             console.info("Killing chart " + i);
         }
@@ -93,14 +89,16 @@ function setupDashboard() {
     }
 }
 
-function createUrl(startDate, id) {
+function createUrl(id, timeSpan) {
     var metric = getMetricById(id);
     var metricPath = metric.metricPath;
     var scale = metric.scale;
-    var single = metric.single;
+    single = metric.single;
     var name = metric.name;
+    var url = graphite;
+
     if (typeof scale === "undefined" || scale == "") scale = 1;
-    if (typeof startDate === "undefined") startDate = new Date();
+    
     var endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
     endDate = new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0);
     var start_year = startDate.getFullYear();
@@ -108,10 +106,14 @@ function createUrl(startDate, id) {
     var end_year = endDate.getFullYear();
     var end_month = endDate.getMonth() + 1;
     var end_date = endDate.getDate();
-    var url = graphite;
-    date_from = "00:00_" + start_year + start_month + "01";
-    date_to = "23:59_" + end_year + end_month + end_date;
-    url += "?from=" + date_from + "&until=" + date_to;
+
+    if(typeof timeSpan === 'undefined'){
+        date_from = "00:00_" + start_year + start_month + "01";
+        date_to = "23:59_" + end_year + end_month + end_date;
+        url += "?from=" + date_from + "&until=" + date_to;
+    } else {
+        url += "?from=" + timespan + "&until=now";
+    }
     url += "&target=";
     var gd = metricPath;
     if (typeof single !== "undefined" && single != false) {
@@ -173,19 +175,46 @@ function setupChart(url, id) {
             labelFormatter: function() {
                 var name = this.chart.options.series[0].name;
                 var curUrl = location.href;
-                var single = metric.single;
+                single = metric.single;
                 if (typeof single === "undefined" || single == "" || single == false) {
                     metric.single = true;
-                    link = '<span class="dropdown-metric" onclick="javascript:setupChart(createUrl(new Date(), id), id)" id="' + id + '" style="color:#0898d9;text-decoration:underline;">[View detailed graph]</span>';
+                    link = '<span class="dropdown-metric" onclick="javascript:setupChart(createUrl(id), id)" id="' + id + '" style="color:#0898d9;text-decoration:underline;">[View detailed graph]</span>';
                 } else {
                     metric.single = false;
-                    link = '<span onclick="javascript:setupChart(createUrl(new Date(), id), id)" class="dropdown-metric" id="' + id + '" style="color:#0898d9;text-decoration:underline;">[View average]</span>';
+                    link = '<span onclick="javascript:setupChart(createUrl(id), id)" class="dropdown-metric" id="' + id + '" style="color:#0898d9;text-decoration:underline;">[View average]</span>';
                 }
+
                 return name + " " + link;
             }
         },
         rangeSelector: {
-            enabled: false
+            enabled: true,
+            buttons: [{
+                type: 'day',
+                count: 1,
+                text: '1d'
+            }, {
+                type: 'day',
+                count: 2,
+                text: '2d'
+            }, {
+                type: 'day',
+                count: 5,
+                text: '5d'
+            }, {
+                type: 'day',
+                count: 15,
+                text: '15d'
+            }, {
+                type: 'all',
+                text: '1m'
+            }]
+            
+        },
+        plotOptions: {
+            series: {
+                connectNulls: true
+            }
         },
         tooltip: {
             crosshairs: true,
@@ -237,6 +266,11 @@ function setupChart(url, id) {
         cache: false
     });
     if (options.series.length > 0) options.title.text = options.series[0].name;
+    Highcharts.setOptions({
+        global: {
+            useUTC: false // Time passed to JS is not UTC
+        }
+    });
     var chart = new Highcharts.StockChart(options);
     if (nodata) {
         chart.showLoading("No data available for this metric for the given time period!");
@@ -271,4 +305,8 @@ function sprintf(format) {
         format = format.replace(/%s/, arguments[i]);
     }
     return format;
+}
+
+function getMetricById(id) {
+    return metrics[id];
 }
