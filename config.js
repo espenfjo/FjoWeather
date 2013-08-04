@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 var graphite = "http://graphite.mrfjo.org/render/";
+
+var useUTC = false;
 
 var metrics = metrics || [ {
     name: "Balkong",
@@ -24,7 +25,7 @@ var metrics = metrics || [ {
     suffix: "°C",
     scale: "",
     dashboard: true,
-    single: false
+    average: true
 }, {
     name: "Soverom",
     metricPath: "mrfjo.hjemme.temp.telldus.Soverom",
@@ -32,7 +33,7 @@ var metrics = metrics || [ {
     suffix: "°C",
     dashboard: true,
     scale: "",
-    single: ""
+    average: true
 }, {
     name: "Office desk",
     metricPath: "mrfjo.hjemme.temp.28-000002dcb9bc",
@@ -40,7 +41,7 @@ var metrics = metrics || [ {
     dashboard: false,
     suffix: "°C",
     scale: "0.001",
-    single: ""
+    average: true
 }, {
     name: "Outside wall",
     metricPath: "mrfjo.hjemme.temp.28-0000044ddd1d",
@@ -48,7 +49,7 @@ var metrics = metrics || [ {
     dashboard: false,
     suffix: "°C",
     scale: "0.001",
-    single: ""
+    average: true
 }, {
     name: "Barometer",
     metricPath: "mrfjo.hjemme.pressure.bmp085_pressure",
@@ -56,7 +57,7 @@ var metrics = metrics || [ {
     dashboard: true,
     suffix: "Pa",
     scale: "",
-    single: true
+    average: false
 }, {
     name: "Light",
     metricPath: "mrfjo.hjemme.light.tsl2561_lux",
@@ -64,7 +65,7 @@ var metrics = metrics || [ {
     dashboard: false,
     suffix: "lx",
     scale: "",
-    single: true
+    average: false
 }, {
     name: "Humidity",
     metricPath: "mrfjo.hjemme.humidity.dht11_humidity",
@@ -72,5 +73,5 @@ var metrics = metrics || [ {
     dashboard: false,
     suffix: "%",
     scale: "",
-    single: true
+    average: false
 } ];
