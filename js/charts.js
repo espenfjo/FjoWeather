@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 function temperature(name, metricPath, id) {
-    $("#graphs").append('<div id="' + name + '" class="col-4">foo</div>');
+    $("#graphs").append('<div id="' + name + '" class="col-4"></div>');
     var chart;
     var options = {
         chart: {
