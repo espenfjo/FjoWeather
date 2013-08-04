@@ -322,6 +322,11 @@ function drawChart(url, id) {
         cache: false
     });
     if (options.series.length > 0) options.title.text = options.series[0].name;
+    Highcharts.setOptions({
+        global: {
+            useUTC: useUTC
+        }
+    });
     var chart = new Highcharts.StockChart(options);
     if (nodata) {
         chart.showLoading("No data available for this metric for the given time period!");

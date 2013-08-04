@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 var graphite = "http://graphite.mrfjo.org/render/";
+
+var useUTC = false;
 
 var metrics = metrics || [ {
     name: "Balkong",
