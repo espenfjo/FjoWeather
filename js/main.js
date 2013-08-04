@@ -14,44 +14,78 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var name, single, metric, prefix;
+var name, prefix, id, startDate, timeSpan;
 
 $(function() {
-    $("#dp1").datepicker({
-        autoclose: true,
-        minViewMode: "months",
-        todayHighlight: true
-    }).on("changeDate", function(ev) {
-        startDate = new Date(ev.date);
-        var month = startDate.getMonth() + 1;
-        if (month < 10) month = "0" + month;
-        var id = queryObj()["id"];
-        setupChart(createUrl(startDate, id), id);
-    });
-    var now = new Date();
-    var month = now.getMonth() + 1;
-    if (month < 10) month = "0" + month;
-    var today = month + "-" + now.getFullYear();
-    $(".datepicker").datepicker("setDate", now);
-    $("#dp1 input").val(today);
+    startDate = new Date();
     $("#dropdown-menu").empty();
     populateDropdown();
     setListener();
+    setupDatePicker();
 });
 
-function setListener() {
-    $(".dropdown-metric").on("click", function() {
-        var id = $(this).attr("id");
-        setupChart(createUrl(new Date(), id), id);
-    });
-    $(".home").on("click", function() {
-        var id = $(this).attr("id");
-        setupDashboard();
+function setupDatePicker() {
+    var format, viewMode;
+    var day = startDate.getDate();
+    if (day < 10) day = "0" + day;
+    var month = startDate.getMonth() + 1;
+    if (month < 10) month = "0" + month;
+    var year = startDate.getFullYear();
+    timeSpan = timeSpan || "month";
+    timeSpan = timeSpan + "s";
+    if (timeSpan === "months") {
+        format = "mm-yyyy";
+        viewMode = month + "-" + year;
+    } else if (timeSpan === "days") {
+        format = "dd-mm-yyyy";
+        viewMode = day + "-" + month + "-" + year;
+    } else if (timeSpan === "years") {
+        format = "yyyy";
+        viewMode = year;
+    }
+    $("#dp1").attr("data-date-format", format);
+    $("#dp1").datepicker("remove");
+    $("#dp1 input").val(viewMode);
+    $("#dp1").datepicker({
+        autoclose: true,
+        format: format,
+        minViewMode: timeSpan,
+        todayHighlight: true,
+        weekStart: 1
+    }).on("changeDate", function(ev) {
+        startDate = new Date(ev.date);
+        setupChart(id, timeSpan);
     });
 }
 
-function getMetricById(id) {
-    return metrics[id];
+function setupChart(id, average) {
+    clearCharts();
+    $("#graphs").empty();
+    $("#graphs").append('<div id="graph"></div>');
+    $("#timechanger").show();
+    var metric = getMetricById(id);
+    if (typeof average !== "undefined") {
+        if (average === true) metric.average = true; else metric.average = false;
+    }
+    var url = createUrl(id, timeSpan);
+    drawChart(url, id);
+}
+
+function setListener() {
+    $(".dropdown-metric").on("click", function() {
+        id = $(this).attr("id");
+        setupChart(id);
+    });
+    $(".home").on("click", function() {
+        id = $(this).attr("id");
+        setupDashboard();
+    });
+    $(".timespan").on("click", function() {
+        var bid = $(this).children(":first").attr("id");
+        timeSpan = bid.split("-")[1];
+        setupDatePicker(timeSpan);
+        setupChart(id);
+    });
 }
 
 function populateDropdown() {
@@ -72,15 +106,15 @@ function populateDropdown() {
 function clearCharts() {
     if (typeof Highcharts !== "undefined") {
         for (var i = 0; i < Highcharts.charts.length; i++) {
-            console.info(Highcharts);
             Highcharts.charts[i].destroy();
-            console.info("Killing chart " + i);
+            window.console && console.info("Killing chart " + i);
         }
         Highcharts.charts = [];
     }
 }
 
 function setupDashboard() {
+    $("#well").hide();
     clearCharts();
     for (var i = 0; i < metrics.length; i++) {
         var metric = metrics[i];
@@ -93,28 +127,53 @@ function setupDashboard() {
     }
 }
 
-function createUrl(startDate, id) {
+function createUrl(id) {
+    var start_year, start_month, start_day, endDate, end_year, end_month, end_date;
     var metric = getMetricById(id);
     var metricPath = metric.metricPath;
     var scale = metric.scale;
-    var single = metric.single;
     var name = metric.name;
-    if (typeof scale === "undefined" || scale == "") scale = 1;
-    if (typeof startDate === "undefined") startDate = new Date();
-    var endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
-    endDate = new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0);
-    var start_year = startDate.getFullYear();
-    var start_month = startDate.getMonth() + 1;
-    var end_year = endDate.getFullYear();
-    var end_month = endDate.getMonth() + 1;
-    var end_date = endDate.getDate();
     var url = graphite;
-    date_from = "00:00_" + start_year + start_month + "01";
-    date_to = "23:59_" + end_year + end_month + end_date;
-    url += "?from=" + date_from + "&until=" + date_to;
+    var averageDelimiter;
+    var average = metric.average;
+    console.info(average);
+    if (typeof scale === "undefined" || scale == "") scale = 1;
+    start_year = startDate.getFullYear();
+    if (typeof timeSpan === "undefined" || timeSpan === "months") {
+        averageDelimiter = "1day";
+        start_month = startDate.getMonth() + 1;
+        endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
+        endDate = new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0);
+        end_year = endDate.getFullYear();
+        end_month = endDate.getMonth() + 1;
+        end_date = endDate.getDate();
+        date_from = "00:00_" + start_year + start_month + "01";
+        date_to = "23:59_" + end_year + end_month + end_date;
+        url += "?from=" + date_from + "&until=" + date_to;
+    } else if (timeSpan === "years") {
+        averageDelimiter = "1month";
+        endDate = new Date(startDate.getFullYear(), 0, 0);
+        endDate = new Date(endDate.getFullYear() + 1, 0, 0);
+        end_year = endDate.getFullYear() + 1;
+        date_from = "00:00_" + start_year + "0101";
+        date_to = "23:59_" + end_year + "1231";
+        url += "?from=" + date_from + "&until=" + date_to;
+    } else if (timeSpan === "days") {
+        averageDelimiter = "1hour";
+        start_month = startDate.getMonth() + 1;
+        start_date = startDate.getDate();
+        endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate());
+        endDate = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+        end_year = endDate.getFullYear();
+        end_month = endDate.getMonth();
+        end_date = endDate.getDate();
+        date_from = "00:00_" + start_year + start_month + start_date;
+        date_to = "23:59_" + end_year + end_month + end_date;
+        url += "?from=" + date_from + "&until=" + date_to;
+    }
     url += "&target=";
     var gd = metricPath;
-    if (typeof single !== "undefined" && single != false) {
+    if (typeof average !== "undefined" && average === false) {
         if (typeof scale !== "undefined") {
             gd = "scale(" + gd + ',"' + scale + '")';
         }
@@ -122,16 +181,16 @@ function createUrl(startDate, id) {
             gd = "alias(" + gd + ',"' + name + '")';
         }
     }
-    if (typeof single === "undefined" || single == "" || single == false) {
+    if (typeof average === "undefined" || average === "" || average === true) {
         var lgd = gd;
         if (typeof name !== "undefined" && name != "") {
-            gd = sprintf("alias(scale(smartSummarize( %s, '1day', 'max'), %s), '%s Average')", lgd, scale, name);
-            gd += sprintf("&target=alias(scale(smartSummarize( %s, '1day','min'), %s), '%s Min')", lgd, scale, name);
-            gd += sprintf("&target=alias(scale(smartSummarize( %s, '1day','avg'), %s), '%s Average')", lgd, scale, name);
+            gd = sprintf("alias(scale(smartSummarize( %s, '%s', 'max'), %s), '%s Average')", lgd, averageDelimiter, scale, name);
+            gd += sprintf("&target=alias(scale(smartSummarize( %s, '%s','min'), %s), '%s Min')", lgd, averageDelimiter, scale, name);
+            gd += sprintf("&target=alias(scale(smartSummarize( %s, '%s','avg'), %s), '%s Average')", lgd, averageDelimiter, scale, name);
         } else {
-            gd = "smartSummarize(" + lgd + ',"1day","max")';
-            gd += "&target=smartSummarize(" + lgd + ",'1day','min')";
-            gd += "&target=smartSummarize(" + lgd + ",'1day','avg')";
+            gd = "smartSummarize(" + lgd + ',"' + averageDelimiter + '","max")';
+            gd += "&target=smartSummarize(" + lgd + ",'" + averageDelimiter + "','min')";
+            gd += "&target=smartSummarize(" + lgd + ",'" + averageDelimiter + "','avg')";
         }
     }
     url += gd;
@@ -139,10 +198,7 @@ function createUrl(startDate, id) {
     return url;
 }
 
-function setupChart(url, id) {
-    clearCharts();
-    $("#graphs").empty();
-    $("#graphs").append('<div id="graph"></div>');
+function drawChart(url, id) {
     var nodata = false;
     var title;
     var metric = getMetricById(id);
@@ -173,19 +229,48 @@ function setupChart(url, id) {
             labelFormatter: function() {
                 var name = this.chart.options.series[0].name;
                 var curUrl = location.href;
-                var single = metric.single;
-                if (typeof single === "undefined" || single == "" || single == false) {
-                    metric.single = true;
-                    link = '<span class="dropdown-metric" onclick="javascript:setupChart(createUrl(new Date(), id), id)" id="' + id + '" style="color:#0898d9;text-decoration:underline;">[View detailed graph]</span>';
+                var average = metric.average;
+                if (typeof average === "undefined" || average === "" || average === true) {
+                    link = '<span class="dropdown-metric" onclick="javascript:setupChart(id, false)" id="' + id + '" style="color:#0898d9;text-decoration:underline;">[View detailed graph]</span>';
                 } else {
-                    metric.single = false;
-                    link = '<span onclick="javascript:setupChart(createUrl(new Date(), id), id)" class="dropdown-metric" id="' + id + '" style="color:#0898d9;text-decoration:underline;">[View average]</span>';
+                    link = '<span onclick="javascript:setupChart(id, true)" class="dropdown-metric" id="' + id + '" style="color:#0898d9;text-decoration:underline;">[View average]</span>';
                 }
                 return name + " " + link;
             }
         },
+        plotOptions: {
+            gapSize: 0,
+            series: {
+                connectNulls: true
+            }
+        },
         rangeSelector: {
-            enabled: false
+            enabled: true,
+            buttons: [ {
+                type: "day",
+                count: 1,
+                text: "1d"
+            }, {
+                type: "day",
+                count: 2,
+                text: "2d"
+            }, {
+                type: "day",
+                count: 5,
+                text: "5d"
+            }, {
+                type: "day",
+                count: 15,
+                text: "15d"
+            }, {
+                type: "all",
+                text: "1m"
+            } ]
+        },
+        plotOptions: {
+            series: {
+                connectNulls: true
+            }
         },
         tooltip: {
             crosshairs: true,
@@ -230,7 +315,7 @@ function setupChart(url, id) {
                     lineColor: Highcharts.getOptions().colors[0]
                 }, options.series.splice($.inArray(2, options.series), 1);
             }
-            if (data.length == 0 && typeof data.datapoints === "undefined") {
+            if (data.length === 0 && typeof data.datapoints === "undefined") {
                 nodata = true;
             }
         },
@@ -271,4 +356,8 @@ function sprintf(format) {
         format = format.replace(/%s/, arguments[i]);
     }
     return format;
+}
+
+function getMetricById(id) {
+    return metrics[id];
 }
