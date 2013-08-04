@@ -54,7 +54,7 @@ function setupDatePicker() {
         weekStart: 1
     }).on("changeDate", function(ev) {
         startDate = new Date(ev.date);
-        setupChart(id, timeSpan);
+        setupChart(id);
     });
 }
 
