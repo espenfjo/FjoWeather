@@ -275,6 +275,7 @@ function drawChart(url, id) {
             }
         },
         tooltip: {
+            valueDecimals:1,
             crosshairs: true,
             shared: true,
             valueSuffix: " " + suffix
