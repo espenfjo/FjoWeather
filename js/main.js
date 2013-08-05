@@ -147,6 +147,10 @@ function createUrl(id) {
         end_year = endDate.getFullYear();
         end_month = endDate.getMonth() + 1;
         end_date = endDate.getDate();
+        if (start_month < 10) start_month = "0" + start_month;
+        if (end_month < 10) end_month = "0" + end_month;
+        if (end_date < 10) end_date = "0" + end_date;
+
         date_from = "00:00_" + start_year + start_month + "01";
         date_to = "23:59_" + end_year + end_month + end_date;
         url += "?from=" + date_from + "&until=" + date_to;
@@ -167,6 +171,11 @@ function createUrl(id) {
         end_year = endDate.getFullYear();
         end_month = endDate.getMonth();
         end_date = endDate.getDate();
+        if (start_month < 10) start_month = "0" + start_month;
+        if (start_date < 10) start_date = "0" + start_date;
+        if (end_month < 10) end_month = "0" + end_month;
+        if (end_date < 10) end_date = "0" + end_date;
+
         date_from = "00:00_" + start_year + start_month + start_date;
         date_to = "23:59_" + end_year + end_month + end_date;
         url += "?from=" + date_from + "&until=" + date_to;
