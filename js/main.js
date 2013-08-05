@@ -285,7 +285,8 @@ function drawChart(url, id) {
             valueDecimals: 1,
             crosshairs: true,
             shared: true,
-            valueSuffix: " " + suffix
+            valueSuffix: " " + suffix,
+            valueDecimals: 1
         },
         yAxis: {
             labels: {
