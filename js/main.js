@@ -277,7 +277,8 @@ function drawChart(url, id) {
         tooltip: {
             crosshairs: true,
             shared: true,
-            valueSuffix: " " + suffix
+            valueSuffix: " " + suffix,
+            valueDecimals: 1
         },
         yAxis: {
             labels: {
