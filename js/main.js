@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var name, prefix, id, startDate, timeSpan;
+var id, startDate, timeSpan;
 
 $(function() {
     startDate = new Date();
