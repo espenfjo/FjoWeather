@@ -363,3 +363,9 @@ span.dropdown-metric {
   background-image: none;
   filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 }
+
+.pgelement {
+    display: inline-block !important;
+    vertical-align: lower !important;
+    float: none;
+}
