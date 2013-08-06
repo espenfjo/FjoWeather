@@ -28,6 +28,69 @@
     <link rel="stylesheet" href="css/bootstrap-glyphicons.css">
     <link rel="stylesheet" href="css/datepicker.css">
     <link rel="stylesheet" href="css/main.css">
+  </head>
+  <body>
+    <div id="wrap">
+      <div class="navbar navbar-fixed-top">
+        <div class="container">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+
+          <a class="navbar-brand" href="">FjoWeather</a>
+          <div class="nav-collapse collapse">
+             <ul class="nav navbar-nav">
+               <li class="active"><a href="#" id="home">Home</a></li>
+               <li class="dropdown">
+                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Graphs <b class="caret"></b></a>
+                 <ul id="dropdown-menu" class="dropdown-menu">
+                 </ul>
+               </li>
+             </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+
+      <div class="container">
+        <div id="timechanger" class="well row" style="display:none">
+          <div class="btn-group col-3" data-toggle="buttons">
+            <label class="btn btn-primary timespan">
+              <input type="radio" name="options" id="timespan-day"> Day
+            </label>
+            <label class="btn btn-primary active timespan">
+              <input type="radio" name="options" id="timespan-month"> Month
+            </label>
+            <label class="btn btn-primary timespan">
+              <input type="radio" name="options" id="timespan-year"> Year
+            </label>
+          </div>
+          <div class="input-group date" id="dp1" data-date-format="mm-yyyy">
+            <input class="span2 form-control" size="16" type="text" readonly="">
+            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+            </span>
+          </div>
+        </div>
+        <div id="graphs" class="row">
+          <div id="graph"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="footer">
+      <div class="container">
+        <p class="text-muted credit">Courtesy of <a href="mailto:espen@mrfjo.org">Espen Fjellvær Olsen</a>.</p>
+      </div>
+    </div>
+
+    <script src="js/plugins.js"></script>
+    <script src="http://code.highcharts.com/stock/highstock.js"></script>
+    <script src="http://code.highcharts.com/stock/highcharts-more.js"></script>
+    <script src="http://balupton.github.io/jquery-scrollto/lib/jquery-scrollto.js"></script>
+    <script src="http://browserstate.github.io/history.js/scripts/bundled/html5/jquery.history.js"></script>
+
+
     <script src="config.js"></script>
     <script src="js/main.js"></script>
     <script src="js/charts.js"></script>
@@ -37,66 +100,6 @@
           setupDashboard();
       });
     </script>
-  </head>
-  <body>
-    <div class="navbar">
-      <div class="container">
-        <a class="navbar-brand" href="">FjoWeather</a>
-        <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <div class="nav-collapse collapse navbar-responsive-collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="" class="menu" id="home">Home</a></li>
-            <!--            <li><a href="#about">About</a></li>
-                            <li><a href="#contact">Contact</a></li>-->
-            <li class="dropdown dropdown-collapse navbar-responsive-collapse">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Graphs<b class="caret"></b></a>
-              <ul id="dropdown-menu" class="dropdown-menu">
-              </ul>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <div class="container">
-
-    <div id="timechanger" class="well row" style="display:none">
-      <div class="btn-group col-3" data-toggle="buttons">
-        <label class="btn btn-primary timespan">
-          <input type="radio" name="options" id="timespan-day"> Day
-        </label>
-        <label class="btn btn-primary active timespan">
-          <input type="radio" name="options" id="timespan-month"> Month
-        </label>
-        <label class="btn btn-primary timespan">
-          <input type="radio" name="options" id="timespan-year"> Year
-        </label>
-      </div>
-      <div class="input-group date" id="dp1" data-date-format="mm-yyyy">
-        <input class="span2 form-control" size="16" type="text" readonly="">
-        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
-        </span>
-      </div>
-    </div>
-
-    <div id="graphs" class="row">
-      <div id="graph"></div>
-    </div>
-    <div id="footer">
-      <div class="container">
-        <p class="muted credit">Courtesy of <a href="mailto://espen@mrfjo.org">Espen Fjellvær Olsen</a>.</p>
-      </div>
-    </div>
-
-    </div>
-
-
-    <script src="js/plugins.js"></script>
-    <script src="http://code.highcharts.com/stock/highstock.src.js"></script>
-    <script src="http://code.highcharts.com/stock/highcharts-more.js"></script>
 
 
     <script>
