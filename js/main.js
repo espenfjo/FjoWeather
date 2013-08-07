@@ -76,8 +76,7 @@ function setListener() {
         id = $(this).attr("id");
         setupChart(id);
     });
-
-    $(".home").on("click", function() {
+    $("#home").on("click", function() {
         id = $(this).attr("id");
         setupDashboard();
     });
@@ -236,7 +235,6 @@ function drawChart(url, id) {
                 } else {
                     link = '<span onclick="javascript:setupChart(id, true)" class="dropdown-metric" id="' + id + '" style="color:#0898d9;text-decoration:underline;">[View average]</span>';
                 }
-
                 return name + " " + link;
             }
         },
@@ -275,7 +273,7 @@ function drawChart(url, id) {
             }
         },
         tooltip: {
-            valueDecimals:1,
+            valueDecimals: 1,
             crosshairs: true,
             shared: true,
             valueSuffix: " " + suffix

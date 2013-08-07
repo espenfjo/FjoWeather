@@ -42,7 +42,7 @@ function temperature(name, metricPath, id) {
             text: name
         },
         xAxis: {
-            categories: "",
+            categories: ""
         },
         series: [ {
             name: "Temperature",
@@ -68,8 +68,8 @@ function temperature(name, metricPath, id) {
 
 function pressure(name, metricPath, id) {
     $("#graphs").append('<div class="row presrow" id="pressuregroup"></div>');
-    $("#pressuregroup").append('<div id="barometer" class="col-4 pgelement"></div>');
-    var chart;
+    $("#pressuregroup").append('<div id="barometer" class="col-4"></div>');
+    var chart, now;
     var options = {
         chart: {
             renderTo: "barometer",
@@ -120,7 +120,7 @@ function pressure(name, metricPath, id) {
             } ]
         },
         xAxis: {
-            categories: [''],
+            categories: [ "" ]
         },
         yAxis: {
             min: 95e3,
@@ -185,16 +185,20 @@ function pressure(name, metricPath, id) {
             point = point[0].datapoints;
             var data = getLatestPoint(point);
             options.series[0].data = [ data[0] ];
+            now = data[0];
         },
         cache: false
     });
     chart = new Highcharts.Chart(options);
-    pressureProgonosis(metricPath);
+    pressureProgonosis(metricPath, now);
 }
 
-function pressureProgonosis(metricPath) {
+function pressureProgonosis(metricPath, pNow) {
     var name = "Pressure over time";
-    $("#pressuregroup").append('<div id="' + name + '" class="col-1 pgelement"></div>');
+    var pressures = [];
+    $("#pressuregroup").append('<div id="pgprog" "class="row"></div>');
+    $("#pgprog").append('<div id="climacon"></div>');
+    $("#pgprog").append('<div id="' + name + '" class="pgelement col-2"></div>');
     var chart;
     var options = {
         chart: {
@@ -218,42 +222,62 @@ function pressureProgonosis(metricPath) {
             text: name
         },
         xAxis: {
-            categories: [''],
+            categories: [ "" ]
         },
-        yAxis:{            
-        },
-        series: [{}]
+        yAxis: {},
+        series: [ {} ]
     };
-    
-    metricPath = "movingMedian(" + metricPath +",20)";
-    var progonosisTime = ['1','2','6','12','24'];
-    for(var i = 0; i < progonosisTime.length; i++){
-        var min = 1e10;
-        console.info(graphite + "?target=" + metricPath + "&from=-"+ progonosisTime[i] +"hours&format=json");
+    metricPath = "movingMedian(" + metricPath + ",20)";
+    var progonosisTime = [ "1", "2", "6", "12", "24" ];
+    var min = 1e10;
+    for (var i = 0; i < progonosisTime.length; i++) {
+        console.info(graphite + "?target=" + metricPath + "&from=-" + progonosisTime[i] + "hours&format=json");
         $.ajax({
             async: false,
             dataType: "json",
-            url: graphite + "?target=" + metricPath + "&from=-"+ progonosisTime[i] +"hours&format=json",
+            url: graphite + "?target=" + metricPath + "&from=-" + progonosisTime[i] + "hours&format=json",
             success: function(point) {
                 var sI = i + 1;
                 point = point[0].datapoints;
                 var firstPoint = getFirstPoint(point);
-                if (min > firstPoint[0])
-                    min = firstPoint[0];
-                
-                var data = [progonosisTime[i] + " Hour(s)", firstPoint[0]];
+                if (min > firstPoint[0]) min = firstPoint[0];
+                var data = [ progonosisTime[i] + " Hour(s)", firstPoint[0] ];
+                pressures.push(firstPoint[0]);
                 options.series[sI] = {};
-                options.series[sI].data = [data];
+                options.series[sI].data = [ data ];
                 options.series[sI].name = "foo";
-                options.yAxis.min = min - 70 ;
+                options.yAxis.min = min - 70;
             },
             cache: false
         });
     }
     options.series.reverse();
     chart = new Highcharts.Chart(options);
+    var p0;
+    $.ajax({
+        async: false,
+        dataType: "json",
+        url: graphite + "?target=" + metricPath + "&from=-3hours&format=json",
+        success: function(point) {
+            point = point[0].datapoints;
+            var firstPoint = getFirstPoint(point);
+            p0 = firstPoint[0];
+        },
+        cache: false
+    });
+    var diff = pNow - p0;
+    console.info(diff);
+    if (diff > 150) {
+        console.info("Getting sunny");
+        $("#climacon").addClass("climacon sun");
+    } else if (diff <= 150 || diff >= -150) {
+        console.info("No change");
+        $("#climacon").addClass("climacon sun cloud");
+    } else if (diff < -150) {
+        console.info("Getting Rainy!");
+        image = "rain.png";
+    }
 }
-
 
 function liveData(element, that, id) {
     var chart = that[0].Highcharts.charts[id];
@@ -278,8 +302,8 @@ function liveData(element, that, id) {
     });
 }
 
-function getFirstPoint(points){
-    for (var i = 0; i <= points.length ; i++) {
+function getFirstPoint(points) {
+    for (var i = 0; i <= points.length; i++) {
         var data = points[i];
         if (data[0] !== null) {
             return data;

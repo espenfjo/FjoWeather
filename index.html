@@ -22,11 +22,14 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
-    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/js/bootstrap.min.js"></script>
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/css/bootstrap.min.css" rel="stylesheet">
+<!--    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/js/bootstrap.min.js"></script>
+        <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/css/bootstrap.min.css" rel="stylesheet"> -->
+     <script src="js/bootstrap.min.js"></script>
+     <link href="css/bootstrap.min.css" rel="stylesheet">
+
     <link rel="stylesheet" href="css/bootstrap-glyphicons.css">
     <link rel="stylesheet" href="css/datepicker.css">
+    <link rel="stylesheet" href="css/climacons.css">
     <link rel="stylesheet" href="css/main.css">
   </head>
   <body>
@@ -38,11 +41,10 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-
           <a class="navbar-brand" href="">FjoWeather</a>
           <div class="nav-collapse collapse">
              <ul class="nav navbar-nav">
-               <li class="active"><a href="#" id="home">Home</a></li>
+               <li class="active"><a href="" id="home">Home</a></li>
                <li class="dropdown">
                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Graphs <b class="caret"></b></a>
                  <ul id="dropdown-menu" class="dropdown-menu">
@@ -90,7 +92,6 @@
     <script src="http://balupton.github.io/jquery-scrollto/lib/jquery-scrollto.js"></script>
     <script src="http://browserstate.github.io/history.js/scripts/bundled/html5/jquery.history.js"></script>
 
-
     <script src="config.js"></script>
     <script src="js/main.js"></script>
     <script src="js/charts.js"></script>
@@ -100,7 +101,6 @@
           setupDashboard();
       });
     </script>
-
 
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
