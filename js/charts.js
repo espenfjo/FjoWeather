@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 function temperature(name, metricPath, id) {
-    $("#graphs").append('<div id="' + name + '" class="col-2"></div>');
+    $("#graphs").append('<div id="' + name + '" class="col-md-2"></div>');
     var chart;
     var options = {
         chart: {
@@ -53,22 +53,22 @@ function temperature(name, metricPath, id) {
         } ]
     };
     $.ajax({
-        async: false,
+        async: true,
         dataType: "json",
         url: graphite + "?target=" + metricPath + "&from=-20minutes&format=json",
         success: function(point) {
             point = point[0].datapoints;
             var data = getLatestPoint(point);
             options.series[0].data = [ data[0] ];
+            chart = new Highcharts.Chart(options);
         },
         cache: false
     });
-    chart = new Highcharts.Chart(options);
 }
 
 function pressure(name, metricPath, id) {
     $("#graphs").append('<div class="row presrow" id="pressuregroup"></div>');
-    $("#pressuregroup").append('<div id="barometer" class="col-4"></div>');
+    $("#pressuregroup").append('<div id="barometer" class="col-md-4"></div>');
     var chart, now;
     var options = {
         chart: {
@@ -198,7 +198,7 @@ function pressureProgonosis(metricPath, pNow) {
     var pressures = [];
     $("#pressuregroup").append('<div id="pgprog" "class="row"></div>');
     $("#pgprog").append('<div id="climacon"></div>');
-    $("#pgprog").append('<div id="' + name + '" class="pgelement col-2"></div>');
+    $("#pgprog").append('<div id="' + name + '" class="pgelement col-md-2"></div>');
     var chart;
     var options = {
         chart: {
