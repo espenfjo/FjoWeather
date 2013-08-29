@@ -69,16 +69,18 @@ function setupChart(id, average) {
     $("#page-load-modal").modal("show");
     $("body").css("cursor", "wait");
     clearCharts();
-    $("#graphs").empty();
     $("#graphs").append('<div id="graph"></div>');
     $("#timechanger").show();
     var metric = getMetricById(id);
     if (typeof average !== "undefined") {
         if (average === true) metric.average = true; else metric.average = false;
     }
-    var url = createUrl(id, timeSpan);
-    drawChart(url, id);
-
+    if (metric.type == "winddirection") {
+        drawWindD(id);
+    } else {
+        var url = createUrl(id, timeSpan);
+        drawChart(url, id);
+    }
     $("#page-load-modal").modal("hide");
     $("body").css("cursor", "default");
 }
@@ -370,6 +372,354 @@ function drawChart(url, id) {
         }
     });
     var chart = new Highcharts.StockChart(options);
+    if (nodata) {
+        chart.showLoading("No data available for this metric for the given time period!");
+    }
+}
+
+function drawWindD(id) {
+    var nodata = false;
+    var title;
+    var metric = getMetricById(id);
+    var suffix = metric.suffix;
+    var degrees = [];
+    var options = {
+        chart: {
+            renderTo: "graph",
+            marginTop: 80,
+            polar: true,
+            type: "column"
+        },
+        title: {
+            text: title
+        },
+        pane: {
+            size: "85%"
+        },
+        legend: {
+            reversed: true,
+            align: "right",
+            verticalAlign: "top",
+            y: 100,
+            layout: "vertical"
+        },
+        xAxis: {
+            tickmarkPlacement: "on"
+        },
+        yAxis: {
+            min: 0,
+            endOnTick: false,
+            showLastLabel: true,
+            title: {
+                text: "Frequency (%)"
+            },
+            labels: {
+                formatter: function() {
+                    return this.value + "%";
+                }
+            }
+        },
+        tooltip: {
+            valueSuffix: "%",
+            followPointer: true
+        },
+        plotOptions: {
+            series: {
+                stacking: "normal",
+                shadow: false,
+                groupPadding: 0,
+                pointPlacement: "on"
+            }
+        },
+        series: [ {
+            data: [],
+            name: "&lt; 0.5 m/s"
+        }, {
+            data: [ {
+                "0": 0
+            }, {
+                "22.5": 0
+            }, {
+                "45": 0
+            }, {
+                "67.5": 0
+            }, {
+                "90": 0
+            }, {
+                "112.5": 0
+            }, {
+                "135": 0
+            }, {
+                "157.5": 0
+            }, {
+                "180": 0
+            }, {
+                "202.5": 0
+            }, {
+                "225": 0
+            }, {
+                "247.5": 0
+            }, {
+                "270": 0
+            }, {
+                "292.5": 0
+            }, {
+                "315": 0
+            }, {
+                "337.5": 0
+            } ],
+            name: "0.5-2 m/s"
+        }, {
+            data: [ {
+                "0": 0
+            }, {
+                "22.5": 0
+            }, {
+                "45": 0
+            }, {
+                "67.5": 0
+            }, {
+                "90": 0
+            }, {
+                "112.5": 0
+            }, {
+                "135": 0
+            }, {
+                "157.5": 0
+            }, {
+                "180": 0
+            }, {
+                "202.5": 0
+            }, {
+                "225": 0
+            }, {
+                "247.5": 0
+            }, {
+                "270": 0
+            }, {
+                "292.5": 0
+            }, {
+                "315": 0
+            }, {
+                "337.5": 0
+            } ],
+            name: "2-4 m/s"
+        }, {
+            data: [ {
+                "0": 0
+            }, {
+                "22.5": 0
+            }, {
+                "45": 0
+            }, {
+                "67.5": 0
+            }, {
+                "90": 0
+            }, {
+                "112.5": 0
+            }, {
+                "135": 0
+            }, {
+                "157.5": 0
+            }, {
+                "180": 0
+            }, {
+                "202.5": 0
+            }, {
+                "225": 0
+            }, {
+                "247.5": 0
+            }, {
+                "270": 0
+            }, {
+                "292.5": 0
+            }, {
+                "315": 0
+            }, {
+                "337.5": 0
+            } ],
+            name: "4-6 m/s"
+        }, {
+            data: [ {
+                "0": 0
+            }, {
+                "22.5": 0
+            }, {
+                "45": 0
+            }, {
+                "67.5": 0
+            }, {
+                "90": 0
+            }, {
+                "112.5": 0
+            }, {
+                "135": 0
+            }, {
+                "157.5": 0
+            }, {
+                "180": 0
+            }, {
+                "202.5": 0
+            }, {
+                "225": 0
+            }, {
+                "247.5": 0
+            }, {
+                "270": 0
+            }, {
+                "292.5": 0
+            }, {
+                "315": 0
+            }, {
+                "337.5": 0
+            } ],
+            name: "6-8 m/s"
+        }, {
+            data: [ {
+                "0": 0
+            }, {
+                "22.5": 0
+            }, {
+                "45": 0
+            }, {
+                "67.5": 0
+            }, {
+                "90": 0
+            }, {
+                "112.5": 0
+            }, {
+                "135": 0
+            }, {
+                "157.5": 0
+            }, {
+                "180": 0
+            }, {
+                "202.5": 0
+            }, {
+                "225": 0
+            }, {
+                "247.5": 0
+            }, {
+                "270": 0
+            }, {
+                "292.5": 0
+            }, {
+                "315": 0
+            }, {
+                "337.5": 0
+            } ],
+            name: "8-10 m/s"
+        }, {
+            data: [ {
+                "0": 0
+            }, {
+                "22.5": 0
+            }, {
+                "45": 0
+            }, {
+                "67.5": 0
+            }, {
+                "90": 0
+            }, {
+                "112.5": 0
+            }, {
+                "135": 0
+            }, {
+                "157.5": 0
+            }, {
+                "180": 0
+            }, {
+                "202.5": 0
+            }, {
+                "225": 0
+            }, {
+                "247.5": 0
+            }, {
+                "270": 0
+            }, {
+                "292.5": 0
+            }, {
+                "315": 0
+            }, {
+                "337.5": 0
+            } ],
+            name: "&gt; 10 m/s"
+        } ]
+    };
+    var metric = getMetricById(id);
+    var directionUrl = graphite + "?target=smartSummarize(" + metric.metricPath + ", '1day')&format=json";
+    var speedUrl = graphite + "?target=smartSummarize(" + metric.windSpeedPath + ", '1day')&format=json";
+    var winddirection;
+    var speed;
+    $.ajax({
+        async: false,
+        url: directionUrl,
+        dataType: "json",
+        success: function(data) {
+            winddirection = data[0].datapoints;
+        }
+    });
+    $.ajax({
+        async: false,
+        url: speedUrl,
+        dataType: "json",
+        success: function(data) {
+            speed = data[0].datapoints;
+        }
+    });
+    var data = [];
+    var h = new Object();
+    h["0"] = 0;
+    h["22.5"] = 1;
+    h["45"] = 2;
+    h["67.5"] = 3;
+    h["90"] = 4;
+    h["112.5"] = 5;
+    h["135"] = 6;
+    h["157.5"] = 7;
+    h["180"] = 8;
+    h["202.5"] = 9;
+    h["225"] = 10;
+    h["247.5"] = 11;
+    h["270"] = 12;
+    h["292.5"] = 13;
+    h["315"] = 14;
+    h["337.5"] = 15;
+    if (speed.length > 0 && winddirection.length > 0) {
+        for (var i = 0; i <= speed.length; i++) {
+            if (speed[i] != null && speed[i][0] !== null) {
+                if (speed[i][0] >= 10) {} else if (speed[i][0] >= 8) {
+                    data[5][winddirection[i][0]]++;
+                } else if (speed[i][0] >= 6) {
+                    h[winddirection[i][0]]++;
+                    data[4][winddirection[i][0]]++;
+                } else if (speed[i][0] >= 4) {
+                    h[winddirection[i][0]]++;
+                    data[3][winddirection[i][0]]++;
+                } else if (speed[i][0] >= 2) {
+                    h[winddirection[i][0]]++;
+                    data[2][winddirection[i][0]]++;
+                } else if (speed[i][0] >= .5) {
+                    h[winddirection[i][0]]++;
+                    data[1][winddirection[i][0]]++;
+                } else {
+                    h[winddirection[i][0]]++;
+                }
+            }
+        }
+    }
+    console.info(data);
+    options.series = [];
+    options.series[0] = {};
+    options.series[0].data = [];
+    options.series[0].data = [ [ 0, 2 ], [ 90, 3 ], [ 180, 23 ], [ 270, 0 ] ];
+    Highcharts.setOptions({
+        global: {
+            useUTC: useUTC
+        }
+    });
+    var chart = new Highcharts.Chart(options);
+    console.info(chart);
     if (nodata) {
         chart.showLoading("No data available for this metric for the given time period!");
     }
