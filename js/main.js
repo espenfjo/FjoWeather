@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var id, startDate, timeSpan;
+var id, startDate, timeSpan, pageloaded;
 
 $(function() {
     var pId = querystring("id");
@@ -108,7 +108,18 @@ function setListener() {
         setupDashboard();
     });
     window.onpopstate = function(event) {
-        console.log("onpopstate: location: " + document.location.href + ", data: " + JSON.stringify(event.state) + "efo " + JSON.stringify(History.getState()));
+        if( ! pageloaded  ){
+            pageloaded = true;
+            return;
+        }
+        var pId = querystring("id");
+        if (pId.length > 0) {
+            setupChart(pId[0]);
+        }
+        else{
+            setupDashboard();
+        }
+
     };
     $(".timespan").on("click", function() {
         var bid = $(this).children(":first").attr("id");
