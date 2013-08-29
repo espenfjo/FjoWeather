@@ -247,15 +247,12 @@ function pressureProgonosis(metricPath, pNow) {
                 options.series[sI].data = [ data ];
                 options.series[sI].name = "foo";
                 options.yAxis.min = min - 70;
-
             },
             cache: false
         });
     }
-
     options.series.reverse();
     var chart = new Highcharts.Chart(options);
-    
     var p0;
     $.ajax({
         async: true,
@@ -282,7 +279,6 @@ function pressureProgonosis(metricPath, pNow) {
         },
         cache: false
     });
-
 }
 
 function liveData(element, that, id) {
@@ -306,23 +302,4 @@ function liveData(element, that, id) {
         },
         cache: false
     });
-}
-
-function getFirstPoint(points) {
-    for (var i = 0; i <= points.length; i++) {
-        var data = points[i];
-        if (data[0] !== null) {
-            return data;
-        }
-    }
-}
-
-function getLatestPoint(points) {
-    var i = points.length - 1;
-    for (;i >= 0; i--) {
-        var data = points[i];
-        if (data[0] !== null) {
-            return data;
-        }
-    }
 }
