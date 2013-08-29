@@ -59,6 +59,8 @@ function setupDatePicker() {
 }
 
 function setupChart(id, average) {
+    $("#page-load-modal").modal("show");
+    $("body").css("cursor", "wait");
     clearCharts();
     $("#graphs").empty();
     $("#graphs").append('<div id="graph"></div>');
@@ -69,6 +71,9 @@ function setupChart(id, average) {
     }
     var url = createUrl(id, timeSpan);
     drawChart(url, id);
+
+    $("#page-load-modal").modal("hide");
+    $("body").css("cursor", "default");
 }
 
 function setListener() {
@@ -115,6 +120,8 @@ function clearCharts() {
 
 function setupDashboard() {
     $("#well").hide();
+    $("#page-load-modal").modal("show");
+    $("body").css("cursor", "wait");
     clearCharts();
     for (var i = 0; i < metrics.length; i++) {
         var metric = metrics[i];
@@ -125,6 +132,8 @@ function setupDashboard() {
             this[type](name, metricPath, i);
         }
     }
+    $("#page-load-modal").modal("hide");
+    $("body").css("cursor", "default");
 }
 
 function createUrl(id) {
