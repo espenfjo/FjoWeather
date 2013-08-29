@@ -178,7 +178,7 @@ function pressure(name, metricPath, id) {
         } ]
     };
     $.ajax({
-        async: false,
+        async: true,
         dataType: "json",
         url: graphite + "?target=" + metricPath + "&from=-20minutes&format=json",
         success: function(point) {
@@ -186,11 +186,11 @@ function pressure(name, metricPath, id) {
             var data = getLatestPoint(point);
             options.series[0].data = [ data[0] ];
             now = data[0];
+            chart = new Highcharts.Chart(options);
+            pressureProgonosis(metricPath, now);
         },
         cache: false
     });
-    chart = new Highcharts.Chart(options);
-    pressureProgonosis(metricPath, now);
 }
 
 function pressureProgonosis(metricPath, pNow) {
@@ -247,36 +247,42 @@ function pressureProgonosis(metricPath, pNow) {
                 options.series[sI].data = [ data ];
                 options.series[sI].name = "foo";
                 options.yAxis.min = min - 70;
+
             },
             cache: false
         });
     }
+
     options.series.reverse();
-    chart = new Highcharts.Chart(options);
+    var chart = new Highcharts.Chart(options);
+    
     var p0;
     $.ajax({
-        async: false,
+        async: true,
         dataType: "json",
         url: graphite + "?target=" + metricPath + "&from=-3hours&format=json",
         success: function(point) {
             point = point[0].datapoints;
             var firstPoint = getFirstPoint(point);
             p0 = firstPoint[0];
+            console.info(p0);
+            console.info(pNow);
+            var diff = pNow - p0;
+            console.info(diff);
+            if (diff > 150) {
+                console.info("Getting sunny");
+                $("#climacon").addClass("climacon sun");
+            } else if (diff <= 150 || diff >= -150) {
+                console.info("No change");
+                $("#climacon").addClass("climacon sun cloud");
+            } else if (diff < -150) {
+                console.info("Getting Rainy!");
+                image = "rain.png";
+            }
         },
         cache: false
     });
-    var diff = pNow - p0;
-    console.info(diff);
-    if (diff > 150) {
-        console.info("Getting sunny");
-        $("#climacon").addClass("climacon sun");
-    } else if (diff <= 150 || diff >= -150) {
-        console.info("No change");
-        $("#climacon").addClass("climacon sun cloud");
-    } else if (diff < -150) {
-        console.info("Getting Rainy!");
-        image = "rain.png";
-    }
+
 }
 
 function liveData(element, that, id) {
