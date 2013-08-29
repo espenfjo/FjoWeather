@@ -17,11 +17,18 @@
 var id, startDate, timeSpan;
 
 $(function() {
+    var pId = querystring("id");
     startDate = new Date();
     $("#dropdown-menu").empty();
     populateDropdown();
     setListener();
-    setupDatePicker();
+    if (pId.length > 0) {
+        id = pId;
+        setupChart(id);
+    } else {
+        setupDatePicker();
+        setupDashboard();
+    }
 });
 
 function setupDatePicker() {
@@ -79,12 +86,28 @@ function setupChart(id, average) {
 function setListener() {
     $(".dropdown-metric").on("click", function() {
         id = $(this).attr("id");
+        history.pushState({
+            page: 1
+        }, id, "?id=" + id);
         setupChart(id);
     });
     $("#home").on("click", function() {
         id = $(this).attr("id");
+        history.pushState({
+            page: 1
+        }, "Dashboard", ".");
         setupDashboard();
     });
+    $(".navbar-brand").on("click", function() {
+        id = $(this).attr("id");
+        history.pushState({
+            page: 1
+        }, "Dashboard", ".");
+        setupDashboard();
+    });
+    window.onpopstate = function(event) {
+        console.log("onpopstate: location: " + document.location.href + ", data: " + JSON.stringify(event.state) + "efo " + JSON.stringify(History.getState()));
+    };
     $(".timespan").on("click", function() {
         var bid = $(this).children(":first").attr("id");
         timeSpan = bid.split("-")[1];
@@ -116,13 +139,14 @@ function clearCharts() {
         }
         Highcharts.charts = [];
     }
+    $("#graphs").empty();
 }
 
 function setupDashboard() {
-    $("#well").hide();
     $("#page-load-modal").modal("show");
     $("body").css("cursor", "wait");
     clearCharts();
+    $("#timechanger").hide();
     for (var i = 0; i < metrics.length; i++) {
         var metric = metrics[i];
         var name = metric.name;
@@ -368,12 +392,11 @@ function flip(series) {
     return newseries;
 }
 
-function queryObj() {
-    var result = {}, queryString = location.href, re = /([^?=]+)=([^&]*)/g, m;
-    while (m = re.exec(queryString)) {
-        result[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
-    }
-    return result;
+function querystring(key) {
+    var re = new RegExp("(?:\\?|&)" + key + "=(.*?)(?=&|$)", "gi");
+    var r = [], m;
+    while ((m = re.exec(document.location.search)) != null) r.push(m[1]);
+    return r;
 }
 
 function sprintf(format) {
