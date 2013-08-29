@@ -21,7 +21,7 @@ var useUTC = false;
 var metrics = metrics || [ {
     name: "Balkong",
     metricPath: "mrfjo.hjemme.temp.telldus.Balkong",
-    type: "temperature",
+    group: "temperature",
     suffix: "°C",
     scale: "",
     dashboard: true,
@@ -29,7 +29,7 @@ var metrics = metrics || [ {
 }, {
     name: "Soverom",
     metricPath: "mrfjo.hjemme.temp.telldus.Soverom",
-    type: "temperature",
+    group: "temperature",
     suffix: "°C",
     dashboard: true,
     scale: "",
@@ -37,7 +37,7 @@ var metrics = metrics || [ {
 }, {
     name: "Office desk",
     metricPath: "mrfjo.hjemme.temp.28-000002dcb9bc",
-    type: "temperature",
+    group: "temperature",
     dashboard: false,
     suffix: "°C",
     scale: "0.001",
@@ -45,7 +45,7 @@ var metrics = metrics || [ {
 }, {
     name: "Outside wall",
     metricPath: "mrfjo.hjemme.temp.28-0000044ddd1d",
-    type: "temperature",
+    group: "temperature",
     dashboard: false,
     suffix: "°C",
     scale: "0.001",
@@ -53,7 +53,7 @@ var metrics = metrics || [ {
 }, {
     name: "Barometer",
     metricPath: "mrfjo.hjemme.pressure.bmp085_pressure",
-    type: "pressure",
+    group: "pressure",
     dashboard: true,
     suffix: "Pa",
     scale: "",
@@ -61,7 +61,7 @@ var metrics = metrics || [ {
 }, {
     name: "Light",
     metricPath: "mrfjo.hjemme.light.tsl2561_lux",
-    type: "light",
+    group: "light",
     dashboard: false,
     suffix: "lx",
     scale: "",
@@ -69,9 +69,20 @@ var metrics = metrics || [ {
 }, {
     name: "Humidity",
     metricPath: "mrfjo.hjemme.humidity.dht11_humidity",
-    type: "humidity",
+    group: "humidity",
     dashboard: false,
     suffix: "%",
     scale: "",
     average: false
-} ];
+},
+{
+    name: "Wind Direction",
+    metricPath: "mrfjo.hjemme.wind.windDirection",
+    windSpeedPath: "mrfjo.hjemme.wind.averageWind",
+    type: "winddirection",
+    group: "wind",
+    dashboard: false,
+    suffix: "ms",
+    scale: "",
+    average: false
+},];

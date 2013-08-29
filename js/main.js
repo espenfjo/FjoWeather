@@ -123,12 +123,12 @@ function populateDropdown() {
         var metric = metrics[i];
         var name = metric.name;
         var metricPath = metric.metricPath;
-        var type = metric.type;
-        if ($("#" + type).length == 0) {
-            $("#dropdown-menu").append("<li id='" + type + "' class='dropdown-header'>" + type + "</li>");
+        var group = metric.group;
+        if ($("#" + group).length == 0) {
+            $("#dropdown-menu").append("<li id='" + group + "' class='dropdown-header'>" + group + "</li>");
             $("#dropdown-menu").append("<li class='divider'></li>");
         }
-        $("#" + type).after("<li> <span id='" + i + "'class='dropdown-metric'>" + name + "</span></li>");
+        $("#" + group).after("<li> <span id='" + i + "'class='navlink dropdown-metric'>" + name + "</span></li>");
     }
     $(".divider").last().remove();
 }
@@ -153,7 +153,7 @@ function setupDashboard() {
         var metric = metrics[i];
         var name = metric.name;
         var metricPath = metric.metricPath;
-        var type = metric.type;
+        var type = metric.type || metric.group;
         if (metric.dashboard === true) {
             this[type](name, metricPath, i);
         }
