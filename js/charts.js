@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 function temperature(name, metricPath, id) {
-    $("#graphs").append('<div id="' + name + '" class="col-2"></div>');
+    $("#graphs").append('<div id="' + name + '" class="col-md-2"></div>');
     var chart;
     var options = {
         chart: {
@@ -53,22 +53,22 @@ function temperature(name, metricPath, id) {
         } ]
     };
     $.ajax({
-        async: false,
+        async: true,
         dataType: "json",
         url: graphite + "?target=" + metricPath + "&from=-20minutes&format=json",
         success: function(point) {
             point = point[0].datapoints;
             var data = getLatestPoint(point);
             options.series[0].data = [ data[0] ];
+            chart = new Highcharts.Chart(options);
         },
         cache: false
     });
-    chart = new Highcharts.Chart(options);
 }
 
 function pressure(name, metricPath, id) {
     $("#graphs").append('<div class="row presrow" id="pressuregroup"></div>');
-    $("#pressuregroup").append('<div id="barometer" class="col-4"></div>');
+    $("#pressuregroup").append('<div id="barometer" class="col-md-4"></div>');
     var chart, now;
     var options = {
         chart: {
@@ -178,7 +178,7 @@ function pressure(name, metricPath, id) {
         } ]
     };
     $.ajax({
-        async: false,
+        async: true,
         dataType: "json",
         url: graphite + "?target=" + metricPath + "&from=-20minutes&format=json",
         success: function(point) {
@@ -186,11 +186,11 @@ function pressure(name, metricPath, id) {
             var data = getLatestPoint(point);
             options.series[0].data = [ data[0] ];
             now = data[0];
+            chart = new Highcharts.Chart(options);
+            pressureProgonosis(metricPath, now);
         },
         cache: false
     });
-    chart = new Highcharts.Chart(options);
-    pressureProgonosis(metricPath, now);
 }
 
 function pressureProgonosis(metricPath, pNow) {
@@ -198,7 +198,7 @@ function pressureProgonosis(metricPath, pNow) {
     var pressures = [];
     $("#pressuregroup").append('<div id="pgprog" "class="row"></div>');
     $("#pgprog").append('<div id="climacon"></div>');
-    $("#pgprog").append('<div id="' + name + '" class="pgelement col-2"></div>');
+    $("#pgprog").append('<div id="' + name + '" class="pgelement col-md-2"></div>');
     var chart;
     var options = {
         chart: {
@@ -252,31 +252,33 @@ function pressureProgonosis(metricPath, pNow) {
         });
     }
     options.series.reverse();
-    chart = new Highcharts.Chart(options);
+    var chart = new Highcharts.Chart(options);
     var p0;
     $.ajax({
-        async: false,
+        async: true,
         dataType: "json",
         url: graphite + "?target=" + metricPath + "&from=-3hours&format=json",
         success: function(point) {
             point = point[0].datapoints;
             var firstPoint = getFirstPoint(point);
             p0 = firstPoint[0];
+            console.info(p0);
+            console.info(pNow);
+            var diff = pNow - p0;
+            console.info(diff);
+            if (diff > 150) {
+                console.info("Getting sunny");
+                $("#climacon").addClass("climacon sun");
+            } else if (diff <= 150 || diff >= -150) {
+                console.info("No change");
+                $("#climacon").addClass("climacon sun cloud");
+            } else if (diff < -150) {
+                console.info("Getting Rainy!");
+                image = "rain.png";
+            }
         },
         cache: false
     });
-    var diff = pNow - p0;
-    console.info(diff);
-    if (diff > 150) {
-        console.info("Getting sunny");
-        $("#climacon").addClass("climacon sun");
-    } else if (diff <= 150 || diff >= -150) {
-        console.info("No change");
-        $("#climacon").addClass("climacon sun cloud");
-    } else if (diff < -150) {
-        console.info("Getting Rainy!");
-        image = "rain.png";
-    }
 }
 
 function liveData(element, that, id) {
@@ -300,23 +302,4 @@ function liveData(element, that, id) {
         },
         cache: false
     });
-}
-
-function getFirstPoint(points) {
-    for (var i = 0; i <= points.length; i++) {
-        var data = points[i];
-        if (data[0] !== null) {
-            return data;
-        }
-    }
-}
-
-function getLatestPoint(points) {
-    var i = points.length - 1;
-    for (;i >= 0; i--) {
-        var data = points[i];
-        if (data[0] !== null) {
-            return data;
-        }
-    }
 }
