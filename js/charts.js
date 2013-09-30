@@ -55,7 +55,7 @@ function temperature(name, metricPath, id) {
     $.ajax({
         async: true,
         dataType: "json",
-        url: graphite + "?target=" + metricPath + "&from=-20minutes&format=json",
+        url: graphite + "?target=" + metricPath + "&from=-60minutes&format=json",
         success: function(point) {
             point = point[0].datapoints;
             var data = getLatestPoint(point);
@@ -303,3 +303,4 @@ function liveData(element, that, id) {
         cache: false
     });
 }
+
